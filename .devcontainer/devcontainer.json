@@ -1,0 +1,36 @@
+{
+  "name": "JOJO Typing",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "node",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "npm install && npx husky install",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "git.autofetch": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeActionsOnSave": {
+          "source.organizeImports": true,
+          "source.fixAll.eslint": true
+        }
+      },
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "christian-kohler.path-intellisense",
+        "mhutchie.git-graph",
+        "formulahendry.auto-rename-tag",
+        "formulahendry.auto-close-tag",
+        "streetsidesoftware.code-spell-checker",
+        "bradlc.vscode-tailwindcss",
+        "SuhelMakkad.shadcn-ui",
+        "meouwu.css-var-color-decorator",
+        "eamodio.gitlens"
+      ]
+    }
+  }
+}
