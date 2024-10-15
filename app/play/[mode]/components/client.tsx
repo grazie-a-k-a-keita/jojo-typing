@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { bgm, keyboard, typeMiss } from '@/lib/sounds';
 import { randomProblem, typingEn } from '@/lib/typing';
 import { cn } from '@/lib/utils';
+import { useResultState } from '@/providers/result-state';
 import { Undo2 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -16,6 +17,7 @@ const COUNT_DOWN = 3;
 
 export default function Client() {
   const router = useRouter();
+  const { setCorrectTypeCount, setMissTypeCount } = useResultState();
 
   const [show, setShow] = useState(false);
   const [countDown, setCountDown] = useState<number>(COUNT_DOWN);
@@ -30,12 +32,17 @@ export default function Client() {
     if (event.key === 'Escape') {
       // すべての設定をリセットする
       setShow(false);
+      setTypingText({
+        textJp: randomProblem({ type: 'Lowercase' }).textJp,
+        correct: '',
+        problem: randomProblem({ type: 'Lowercase' }).textEn,
+      });
       setCountDown(COUNT_DOWN);
       setGameTimer(GAME_TIME);
+      setCorrectTypeCount(0);
+      setMissTypeCount(0);
       bgm.stop();
     } else {
-      console.log(`key: ${event.key}, problem: ${typingText.problem}`);
-
       const result = typingEn({
         key: event.key,
         comparisonChar: typingText.problem.substring(0, 1),
@@ -43,6 +50,8 @@ export default function Client() {
 
       if (result === 'ok') {
         keyboard.play();
+        setCorrectTypeCount((prev) => prev + 1);
+
         let correct = '';
         let problem = '';
         if (typingText.problem.substring(1, 2) === ' ') {
@@ -52,6 +61,7 @@ export default function Client() {
           correct = typingText.correct + typingText.problem.substring(0, 1);
           problem = typingText.problem.substring(1);
         }
+
         setTypingText({
           textJp: typingText.textJp,
           correct: correct,
@@ -68,7 +78,7 @@ export default function Client() {
         }
       } else {
         typeMiss.play();
-        console.log('miss');
+        setMissTypeCount((prev) => prev + 1);
       }
     }
   };
@@ -83,7 +93,7 @@ export default function Client() {
       }, 1000);
       return () => clearTimeout(timer);
     } else {
-      if (!show) bgm.play();
+      // if (!show) bgm.play();
       setShow(true);
       const timer = setTimeout(() => {
         setGameTimer((prev) => prev - 1);
@@ -114,7 +124,14 @@ export default function Client() {
     <div>
       {show ? (
         <div className='mx-auto max-w-4xl space-y-8 py-8'>
-          <p>{gameTimer}</p>
+          <div className='select-none space-y-4 break-words rounded-md border px-8 py-16 shadow-xl'>
+            <p className='text-center font-medium text-muted-foreground'>{typingText.textJp}</p>
+            <p className='text-center text-2xl font-black tracking-wider'>
+              <span className='text-muted-foreground/10 '>{typingText.correct}</span>
+              <span className='text-primary'>{typingText.problem.substring(0, 1)}</span>
+              <span className='text-primary/70'>{typingText.problem.substring(1)}</span>
+            </p>
+          </div>
           <div className='h-6 w-full overflow-hidden rounded-sm border'>
             <div
               className={cn(
@@ -124,14 +141,6 @@ export default function Client() {
               )}
               style={{ transform: `scaleX(${gameTimer / GAME_TIME})` }}
             ></div>
-          </div>
-          <div className='select-none space-y-4 break-words rounded-md border px-8 py-16 shadow-xl'>
-            <p className='text-center font-medium text-muted-foreground'>{typingText.textJp}</p>
-            <p className='text-center text-2xl font-black tracking-wider'>
-              <span className='text-muted-foreground/10 '>{typingText.correct}</span>
-              <span className='text-primary'>{typingText.problem.substring(0, 1)}</span>
-              <span className='text-primary/70'>{typingText.problem.substring(1)}</span>
-            </p>
           </div>
         </div>
       ) : (

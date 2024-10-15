@@ -4,7 +4,6 @@ import { DelaGothicOne } from '@/components/font/fonts';
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -132,7 +131,6 @@ export default function SettingDialog({ children }: { children: ReactNode }) {
           </form>
         </Form>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => buttonClick.play()}>キャンセル</AlertDialogCancel>
           <AlertDialogAction form='settings-form' onClick={() => buttonClick.play()} type='submit'>
             設定を変更する
           </AlertDialogAction>

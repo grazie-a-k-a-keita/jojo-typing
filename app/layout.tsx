@@ -4,6 +4,7 @@ import Header from '@/components/common/header';
 import TouchOverlay from '@/components/common/touch-overlay';
 import { NotoSansJP } from '@/components/font/fonts';
 import { cn } from '@/lib/utils';
+import { ResultStateProvider } from '@/providers/result-state';
 import { TouchStateProvider } from '@/providers/touch-state';
 import type { Metadata } from 'next';
 import { ReactNode } from 'react';
@@ -25,12 +26,14 @@ export default function RootLayout({
   return (
     <html lang='ja'>
       <TouchStateProvider>
-        <body className={cn(NotoSansJP.className, 'h-dvh')}>
-          <Header />
-          <main className='container'>{children}</main>
-          <Footer />
-          <TouchOverlay />
-        </body>
+        <ResultStateProvider>
+          <body className={cn(NotoSansJP.className, 'h-dvh')}>
+            <Header />
+            <main className='container'>{children}</main>
+            <Footer />
+            <TouchOverlay />
+          </body>
+        </ResultStateProvider>
       </TouchStateProvider>
     </html>
   );
