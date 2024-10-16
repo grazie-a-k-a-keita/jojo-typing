@@ -12,10 +12,10 @@ import { CircleHelp, Keyboard, Settings } from 'lucide-react';
 export default function Home() {
   return (
     <div className={cn(DelaGothicOne.className, 'tracking-widest')}>
-      <div className='py-24'>
-        <p className='text-center text-9xl text-primary'>{appConfig.title}</p>
+      <div className='py-16'>
+        <p className='text-center text-7xl text-primary'>{appConfig.title}</p>
       </div>
-      <div className='mx-auto max-w-xl space-y-8 rounded-md border p-12 shadow-xl'>
+      <div className='mx-auto mb-16 max-w-xl space-y-8 rounded-md border p-12 shadow-xl'>
         <GameSelectDialog>
           <Button className='w-full' size='xl'>
             <Keyboard className='mr-4 size-6' />
