@@ -5,7 +5,7 @@ export const appConfig = {
 
 export const gameType = [
   { id: 'character', name: 'キャラ・スタンド', icon: 'users' },
-  { id: 'english', name: '名言', icon: 'message-circle' },
+  { id: 'dialogue', name: '名言', icon: 'message-circle' },
 ] as const;
 
 export const GAME_TIME = 60;

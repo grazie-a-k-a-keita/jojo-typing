@@ -1,7 +1,4 @@
 import { appConfig } from '@/app.config';
-import Footer from '@/components/common/footer';
-import Header from '@/components/common/header';
-import TouchOverlay from '@/components/common/touch-overlay';
 import { NotoSansJP } from '@/components/font/fonts';
 import { cn } from '@/lib/utils';
 import { ResultStateProvider } from '@/providers/result-state';
@@ -27,12 +24,7 @@ export default function RootLayout({
     <html lang='ja'>
       <TouchStateProvider>
         <ResultStateProvider>
-          <body className={cn(NotoSansJP.className, 'h-dvh')}>
-            <Header />
-            <main className='container'>{children}</main>
-            <Footer />
-            <TouchOverlay />
-          </body>
+          <body className={cn(NotoSansJP.className, 'h-dvh')}>{children}</body>
         </ResultStateProvider>
       </TouchStateProvider>
     </html>

@@ -1,11 +1,11 @@
 import { appConfig } from '@/app.config';
-import { DelaGothicOne } from '@/components/font/fonts';
+import { DelaGothicOne, NotoSansJP } from '@/components/font/fonts';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import pJson from '@/package.json';
 import Link from 'next/link';
 
-export default function Header() {
+export default function Header({ type }: { type: 'game' | 'management' }) {
   return (
     <header className='h-20 border-b bg-primary'>
       <div className='container flex h-full items-center justify-between'>
@@ -17,7 +17,12 @@ export default function Header() {
           )}
           tabIndex={-1}
         >
-          <Link href='/'>{appConfig.title}</Link>
+          <Link href={type === 'management' ? '/management' : '/'}>
+            {appConfig.title}
+            <span className={cn(NotoSansJP.className, 'text-base ml-2')}>
+              {type === 'management' && '管理画面'}
+            </span>
+          </Link>
         </Button>
         <p className='font-medium text-primary-foreground'>ver. {pJson.version}</p>
       </div>
