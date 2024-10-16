@@ -25,11 +25,6 @@ export default function Client({ rankInfo }: { rankInfo: RankInfo[] }) {
 
   return (
     <>
-      <UpdateDialog
-        isOpen={updateDialogOpen}
-        setIsOpen={setUpdateDialogOpen}
-        success={updateDialogSuccess}
-      />
       <div className='sticky top-0 z-50 flex justify-between bg-background/95 py-8 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
         <p className='text-2xl font-bold'>Rank管理</p>
         <div className='space-x-4'>
@@ -101,6 +96,11 @@ export default function Client({ rankInfo }: { rankInfo: RankInfo[] }) {
           ))}
         </TableBody>
       </Table>
+      <UpdateDialog
+        isOpen={updateDialogOpen}
+        setIsOpen={setUpdateDialogOpen}
+        success={updateDialogSuccess}
+      />
     </>
   );
 }
