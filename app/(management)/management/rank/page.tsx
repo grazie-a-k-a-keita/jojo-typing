@@ -1,5 +1,10 @@
 import { getRankInfos } from '@/lib/firebase';
+import { Metadata } from 'next';
 import Client from './components/client';
+
+export const metadata: Metadata = {
+  title: 'ランク管理画面',
+};
 
 export default async function Page() {
   const rankInfo = await getRankInfos();
@@ -8,7 +13,7 @@ export default async function Page() {
 
   return (
     <>
-      <Client rankInfo={rankInfo} />
+      <Client rankInfos={rankInfo} />
     </>
   );
 }

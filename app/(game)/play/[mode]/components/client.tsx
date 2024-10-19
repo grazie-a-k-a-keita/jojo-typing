@@ -149,7 +149,7 @@ export default function Client() {
           <div className='flex justify-center'>
             <Button asChild size='lg'>
               <Link href='/'>
-                <Undo2 className='mr-2' />
+                <Undo2 className='mr-2 size-5' />
                 <span>トップページに戻る</span>
               </Link>
             </Button>

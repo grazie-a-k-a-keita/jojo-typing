@@ -1,11 +1,11 @@
-import Client from '@/app/(game)/result/components/client';
 import { Metadata } from 'next';
+import Client from './components/client';
 
 export const metadata: Metadata = {
-  title: '結果画面',
+  title: '管理画面',
 };
 
-export default function Page() {
+export default async function Page() {
   return (
     <>
       <Client />

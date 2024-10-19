@@ -1,6 +1,8 @@
 'use client';
 
+import ManagementLogin from '@/components/common/management-login';
 import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -11,96 +13,126 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { updateRankInfo } from '@/lib/firebase';
+import { useManagementState } from '@/providers/management-state';
 import { RankInfo } from '@/types/firebase';
-import { CircleArrowUp, CirclePlus } from 'lucide-react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CircleArrowUp } from 'lucide-react';
 import { useState } from 'react';
+import { useFieldArray, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import AddDialog from './add-dialog';
 import UpdateDialog from './update-dialog';
 
-export default function Client({ rankInfo }: { rankInfo: RankInfo[] }) {
-  const [updateInfo, setUpdateInfo] = useState(rankInfo);
+const FormSchema = z.object({
+  rankInfos: z.array(
+    z.object({
+      docId: z.string(),
+      minimumPoint: z.coerce.number(),
+      rank: z.string(),
+    })
+  ),
+});
 
-  // 更新ダイアログ
+export default function Client({ rankInfos }: { rankInfos: RankInfo[] }) {
+  const { auth } = useManagementState();
+
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [updateDialogSuccess, setUpdateDialogSuccess] = useState(false);
 
-  return (
-    <>
-      <div className='sticky top-0 z-50 flex justify-between bg-background/95 py-8 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
-        <p className='text-2xl font-bold'>Rank管理</p>
-        <div className='space-x-4'>
-          <Button
-            onClick={async () => {
-              const result = await updateRankInfo({
-                rankInfos: updateInfo.filter(
-                  (item) =>
-                    !rankInfo.some(
-                      (r) => r.minimumPoint === item.minimumPoint && r.rank === item.rank
-                    )
-                ),
-              });
-              if (result) {
-                setUpdateDialogOpen(true);
-                setUpdateDialogSuccess(true);
-              } else {
-                setUpdateDialogOpen(true);
-                setUpdateDialogSuccess(false);
-              }
-            }}
-          >
-            <CircleArrowUp className='mr-2' />
-            更新
-          </Button>
-          <Button>
-            <CirclePlus className='mr-2' />
-            追加
-          </Button>
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: { rankInfos: rankInfos },
+  });
+
+  const { fields, append } = useFieldArray({
+    control: form.control,
+    name: 'rankInfos',
+  });
+
+  const addList = (rankInfo: RankInfo) => {
+    append(rankInfo);
+  };
+
+  const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const result = await updateRankInfo({ rankInfos: data.rankInfos });
+    if (result) {
+      setUpdateDialogSuccess(true);
+      setUpdateDialogOpen(true);
+    } else {
+      setUpdateDialogSuccess(false);
+      setUpdateDialogOpen(true);
+    }
+  };
+
+  if (!auth) {
+    return <ManagementLogin />;
+  } else {
+    return (
+      <>
+        <div className='sticky top-0 z-50 flex justify-between bg-background/95 py-8 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
+          <p className='text-2xl font-bold'>ランク管理</p>
+          <div className='space-x-4'>
+            <Button form='update-rank-info' type='submit'>
+              <CircleArrowUp className='mr-2 size-5' />
+              更新
+            </Button>
+            <AddDialog addFunction={addList} />
+          </div>
         </div>
-      </div>
-      <Table className='mx-auto mb-16 max-w-4xl'>
-        <TableHeader>
-          <TableRow>
-            <TableHead>No</TableHead>
-            <TableHead>MinimumPoint</TableHead>
-            <TableHead>Rank</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rankInfo.map((item, index) => (
-            <TableRow key={item.docId}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>
-                <Input
-                  defaultValue={item.minimumPoint}
-                  onChange={(e) => {
-                    setUpdateInfo((prev) => {
-                      prev[index].minimumPoint = Number(e.target.value);
-                      return [...prev];
-                    });
-                  }}
-                  type='number'
-                />
-              </TableCell>
-              <TableCell>
-                <Input
-                  defaultValue={item.rank}
-                  onChange={(e) => {
-                    setUpdateInfo((prev) => {
-                      prev[index].rank = e.target.value;
-                      return [...prev];
-                    });
-                  }}
-                  type='text'
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <UpdateDialog
-        isOpen={updateDialogOpen}
-        setIsOpen={setUpdateDialogOpen}
-        success={updateDialogSuccess}
-      />
-    </>
-  );
+        <Form {...form}>
+          <form id='update-rank-info' onSubmit={form.handleSubmit(onSubmit)}>
+            <Table className='mx-auto mb-16 max-w-4xl'>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>No</TableHead>
+                  <TableHead>MinimumPoint</TableHead>
+                  <TableHead>Rank</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {fields.map((field, index) => (
+                  <TableRow key={field.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <FormField
+                        control={form.control}
+                        name={`rankInfos.${index}.minimumPoint`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input type='number' {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <FormField
+                        control={form.control}
+                        name={`rankInfos.${index}.rank`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <UpdateDialog
+              isOpen={updateDialogOpen}
+              setIsOpen={setUpdateDialogOpen}
+              success={updateDialogSuccess}
+            />
+          </form>
+        </Form>
+      </>
+    );
+  }
 }

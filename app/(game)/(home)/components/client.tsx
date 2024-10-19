@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { CircleHelp, Keyboard, Settings } from 'lucide-react';
 
-export default function Page() {
+export default function Client() {
   return (
     <div className={cn(DelaGothicOne.className, 'tracking-widest')}>
       <div className='py-16'>

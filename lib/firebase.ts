@@ -2,7 +2,7 @@
 
 import { RankInfo } from '@/types/firebase';
 import { initializeApp } from 'firebase/app';
-import { collection, doc, getDocs, getFirestore, updateDoc } from 'firebase/firestore/lite';
+import { collection, doc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore/lite';
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -53,4 +53,39 @@ export const updateRankInfo = async ({ rankInfos }: { rankInfos: RankInfo[] }) =
   });
 
   return true;
+};
+
+/**
+ * rankInfo コレクションのドキュメントを更新する
+ * 複数件の更新可
+ */
+export const createRankInfo = async ({ rankInfo }: { rankInfo: Omit<RankInfo, 'docId'> }) => {
+  let rankInfos = await getRankInfos();
+  rankInfos = rankInfos.sort((a, b) => Number(b.docId) - Number(a.docId));
+
+  const newDocId = (Number(rankInfos[0].docId) + 1).toString().padStart(4, '0');
+
+  await setDoc(doc(db, 'rankInfo', newDocId), rankInfo);
+  return { docId: newDocId, ...rankInfo };
+};
+
+/**
+ * loginInfo コレクションからログイン情報を取得し、ログイン結果を返す
+ */
+export const login = async ({
+  userName,
+  password,
+}: {
+  userName: string;
+  password: string;
+}): Promise<boolean> => {
+  const snapshot = await getDocs(collection(db, 'loginInfo'));
+  if (
+    userName === (snapshot.docs[0].data().userName as string) &&
+    password === (snapshot.docs[0].data().password as string)
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 };

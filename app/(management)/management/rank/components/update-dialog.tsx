@@ -1,4 +1,10 @@
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { CircleCheck } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 
@@ -14,8 +20,10 @@ export default function UpdateDialog({
   return (
     <Dialog onOpenChange={setIsOpen} open={isOpen}>
       <DialogContent>
-        <DialogTitle className='hidden'></DialogTitle>
-        <DialogDescription className='hidden'></DialogDescription>
+        <DialogHeader>
+          <DialogTitle>更新結果</DialogTitle>
+          <DialogDescription></DialogDescription>
+        </DialogHeader>
         <div className='flex items-center'>
           <CircleCheck className='mr-4 text-green-500' />
           <p className='text-lg font-semibold'>

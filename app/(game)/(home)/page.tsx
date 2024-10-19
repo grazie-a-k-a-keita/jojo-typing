@@ -1,8 +1,8 @@
-import Client from '@/app/(game)/play/[mode]/components/client';
 import { Metadata } from 'next';
+import Client from './components/client';
 
 export const metadata: Metadata = {
-  title: 'プレイ画面',
+  title: 'ホーム画面',
 };
 
 export default function Page() {
