@@ -25,3 +25,17 @@ export const randomProblem = ({ type }: { type: 'Lowercase' | 'Uppercase' }): Pr
         : beginner[randomIndex].textEn.toUpperCase(),
   };
 };
+
+/**
+ * スコアのポイントを計算する
+ */
+export const calculatePoint = ({
+  correctTypeCount,
+  missTypeCount,
+}: {
+  correctTypeCount: number;
+  missTypeCount: number;
+}) => {
+  const point = correctTypeCount * 10 - missTypeCount * 15;
+  return point > 0 ? point : 0;
+};

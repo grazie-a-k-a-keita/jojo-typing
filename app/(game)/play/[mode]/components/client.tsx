@@ -15,9 +15,9 @@ type TypingText = { textJp: string; correct: string; problem: string };
 
 const COUNT_DOWN = 3;
 
-export default function Client() {
+export default function Client({ mode }: { mode: string }) {
   const router = useRouter();
-  const { setCorrectTypeCount, setMissTypeCount } = useResultState();
+  const { setCorrectTypeCount, setMissTypeCount, reset } = useResultState();
 
   const [show, setShow] = useState(false);
   const [countDown, setCountDown] = useState<number>(COUNT_DOWN);
@@ -31,6 +31,7 @@ export default function Client() {
   const handleKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Escape') {
       // すべての設定をリセットする
+      reset();
       setShow(false);
       setTypingText({
         textJp: randomProblem({ type: 'Lowercase' }).textJp,
@@ -39,8 +40,6 @@ export default function Client() {
       });
       setCountDown(COUNT_DOWN);
       setGameTimer(GAME_TIME);
-      setCorrectTypeCount(0);
-      setMissTypeCount(0);
       bgm.stop();
     } else {
       const result = typingEn({
@@ -86,7 +85,7 @@ export default function Client() {
   useEffect(() => {
     if (gameTimer === 0) {
       // ゲーム終了
-      router.push('/result');
+      router.push(`/result/${mode}`);
     } else if (countDown > 0) {
       const timer = setTimeout(() => {
         setCountDown((prev) => prev - 1);
