@@ -42,7 +42,7 @@ export default function Client({ mode }: { mode: string }) {
               もう一度遊ぶ
             </Link>
           </Button>
-          <ResultRegisterDialog addFunction={() => {}} />
+          <ResultRegisterDialog />
         </div>
       </div>
     </div>

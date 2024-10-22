@@ -24,7 +24,9 @@ export default function Header({ type }: { type: 'game' | 'management' }) {
             </span>
           </Link>
         </Button>
-        <p className='font-medium text-primary-foreground'>ver. {pJson.version}</p>
+        <Button asChild className='text-primary-foreground' variant='link'>
+          <Link href='/'>ver. {pJson.version}</Link>
+        </Button>
       </div>
     </header>
   );

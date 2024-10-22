@@ -2,7 +2,15 @@
 
 import { RankInfo } from '@/types/firebase';
 import { initializeApp } from 'firebase/app';
-import { collection, doc, getDocs, getFirestore, setDoc, updateDoc } from 'firebase/firestore/lite';
+import {
+  addDoc,
+  collection,
+  doc,
+  getDocs,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from 'firebase/firestore/lite';
 
 const firebaseConfig = {
   apiKey: process.env.API_KEY,
@@ -16,14 +24,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-/**
- * sample function
- */
-export const getCities = async () => {
-  const snapshot = await getDocs(collection(db, 'cities'));
-  return snapshot.docs.map((doc) => doc.data());
-};
 
 /**
  * rankInfo コレクションから全てのドキュメントを取得する
@@ -84,6 +84,56 @@ export const login = async ({
     userName === (snapshot.docs[0].data().userName as string) &&
     password === (snapshot.docs[0].data().password as string)
   ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+/**
+ * resultInfo コレクションに結果情報を登録する
+ */
+export const createResultInfo = async ({
+  mode,
+  playerName,
+  successTypeCount,
+  missTypeCount,
+  typeSpeed,
+  point,
+}: {
+  mode: 'character' | 'dialogue';
+  playerName: string;
+  successTypeCount: number;
+  missTypeCount: number;
+  typeSpeed: number;
+  point: number;
+}): Promise<boolean> => {
+  let collectionPath = '';
+  switch (mode) {
+    case 'character': {
+      collectionPath = 'characterResult';
+      break;
+    }
+    case 'dialogue': {
+      collectionPath = 'dialogueResult';
+      break;
+    }
+    default: {
+      collectionPath = '';
+      break;
+    }
+  }
+
+  const result = await addDoc(collection(db, collectionPath), {
+    playerName: playerName,
+    successTypeCount: successTypeCount,
+    missTypeCount: missTypeCount,
+    typeSpeed: typeSpeed,
+    point: point,
+    playDate: new Date(),
+  });
+
+  if (result) {
     return true;
   } else {
     return false;

@@ -21,34 +21,36 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { createRankInfo } from '@/lib/firebase';
-import { RankInfo } from '@/types/firebase';
+import { createResultInfo } from '@/lib/firebase';
+import { useResultState } from '@/providers/result-state';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CircleFadingPlus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 const FormSchema = z.object({
-  minimumPoint: z.coerce.number(),
-  rank: z.string(),
+  playerName: z.string(),
 });
 
-export default function ResultRegisterDialog({
-  addFunction,
-}: {
-  addFunction: (rankInfo: RankInfo) => void;
-}) {
+export default function ResultRegisterDialog() {
+  const { correctTypeCount, missTypeCount, typeSpeed, score } = useResultState();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      minimumPoint: 0,
-      rank: '',
+      playerName: 'Guest',
     },
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const response = await createRankInfo({ rankInfo: data });
-    addFunction(response);
+    await createResultInfo({
+      mode: 'character',
+      playerName: data.playerName,
+      successTypeCount: correctTypeCount,
+      missTypeCount,
+      typeSpeed,
+      point: score.point,
+    });
   };
 
   return (
@@ -63,31 +65,18 @@ export default function ResultRegisterDialog({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <AlertDialogHeader>
-              <AlertDialogTitle>ランクの追加</AlertDialogTitle>
-              <AlertDialogDescription>ランクの情報を入力してください</AlertDialogDescription>
+              <AlertDialogTitle>プレイ記録の登録</AlertDialogTitle>
+              <AlertDialogDescription>全体のランキングに反映されます</AlertDialogDescription>
             </AlertDialogHeader>
             <div className='space-y-4 py-8'>
               <FormField
                 control={form.control}
-                name='minimumPoint'
+                name='playerName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>MinimumPoint（最低ポイント）</FormLabel>
+                    <FormLabel>登録するプレイヤー名</FormLabel>
                     <FormControl>
-                      <Input {...field} type='number' />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='rank'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Rank（ランク）</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
+                      <Input {...field} onFocus={(e) => e.target.select()} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -97,7 +86,7 @@ export default function ResultRegisterDialog({
             <AlertDialogFooter>
               <AlertDialogCancel>キャンセル</AlertDialogCancel>
               <AlertDialogAction asChild>
-                <Button type='submit'>追加する</Button>
+                <Button type='submit'>登録する</Button>
               </AlertDialogAction>
             </AlertDialogFooter>
           </form>
