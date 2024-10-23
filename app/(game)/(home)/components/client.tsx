@@ -7,7 +7,7 @@ import SettingDialog from '@/components/dialog/setting-dialog';
 import { DelaGothicOne } from '@/components/font/fonts';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { CircleHelp, Keyboard, Settings } from 'lucide-react';
+import { CircleHelp, Crown, Keyboard, Settings } from 'lucide-react';
 
 export default function Client() {
   return (
@@ -20,6 +20,12 @@ export default function Client() {
           <Button className='w-full' size='xl'>
             <Keyboard className='mr-4 size-6' />
             <span>スタート</span>
+          </Button>
+        </GameSelectDialog>
+        <GameSelectDialog>
+          <Button className='w-full' size='xl' variant='outline'>
+            <Crown className='mr-4 size-6' />
+            <span>ランキング</span>
           </Button>
         </GameSelectDialog>
         <HowToDialog>

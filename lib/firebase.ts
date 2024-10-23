@@ -1,6 +1,7 @@
 'use server';
 
 import { RankInfo } from '@/types/firebase';
+import { GameCollection, GameMode } from '@/types/game-mode';
 import { initializeApp } from 'firebase/app';
 import {
   addDoc,
@@ -101,14 +102,15 @@ export const createResultInfo = async ({
   typeSpeed,
   point,
 }: {
-  mode: 'character' | 'dialogue';
+  mode: GameMode;
   playerName: string;
   successTypeCount: number;
   missTypeCount: number;
   typeSpeed: number;
   point: number;
 }): Promise<boolean> => {
-  let collectionPath = '';
+  let collectionPath: GameCollection = '';
+
   switch (mode) {
     case 'character': {
       collectionPath = 'characterResult';
